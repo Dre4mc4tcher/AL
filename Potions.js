@@ -20,7 +20,7 @@ function consumingPotions (){
     // USEAGE BELOW
 	if(!character.rip){   // check if the character is dead
 		if(new Date() > parent.next_potion){ // check for cooldown on potions
-			if(character.ctype = 'priest'){ // check if charater is a priest he can heal himself with a better ratio than hp pots so mp is more important
+			if(character.ctype == 'priest'){ // check if charater is a priest he can heal himself with a better ratio than hp pots so mp is more important
 				if((character.max_mp-character.mp) > 500){ // use big mp pots when needed                     
                     parent.socket.emit("equip", { num: locate_item("mpot1")});
                     console.log(character.name +' restored 500 MP with MP Pot! next Potion ready in '+ parent.next_potion);
