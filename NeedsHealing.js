@@ -13,5 +13,5 @@ function needsHealing(){
     partyHealthRatios.sort(function(current,next){
         return current.healthRatio - next.healthRatio;
     })
-    return partyHealthRatios[0];
+    return partyHealthRatios;
 }
