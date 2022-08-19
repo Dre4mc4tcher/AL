@@ -25,6 +25,28 @@ async function moveLoop() {
 }
 moveLoop()
 */
+async function zapperLoop() {
+    try {
+        if(character.slots.ring1.name == 'zapper' || character.slots.ring2.name == 'zapper'){
+            var nearest = Object.values(parent.entities)
+            .filter(e => e.target == null)
+            .filter(e => distance(character,e) <= parent.G.skills.zapperzap.range)
+            .filter(e => e.mtype == 'prat')[0]
+            if (!nearest) {
+            } else if (is_in_range(nearest,'zapperzap') && character.mp >= character.max_mp*0.8) {
+                await use_skill('zapperzap',nearest)
+                /** NOTE: We're now reducing the cooldown based on the ping */
+                reduce_cooldown("zapperzap", Math.min(...parent.pings))
+            }
+
+        }
+    } catch (e) {
+        console.error(e)
+    }
+    setTimeout(zapperLoop, Math.max(1, ms_to_next_skill("zapperzap")))
+}
+zapperLoop()
+
 async function lootLoop() {
     try {
         // The built in loot() does pretty much all of the work for us!
