@@ -41,7 +41,7 @@ async function agitateLOOP() {
     try {    
         var plantoidS = Object.values(parent.entities).filter(e => e.target == "Warrior001");
 		
-        if(plantoidS.length <6){
+        if(plantoidS.length <6 && get_player('Priest001')){
             set_message("Agitating")
             await use_skill('agitate')
         }
