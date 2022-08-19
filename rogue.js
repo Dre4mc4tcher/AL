@@ -30,10 +30,16 @@ async function zapperLoop() {
         if(character.slots.ring1.name == 'zapper' || character.slots.ring2.name == 'zapper'){
             var nearest = Object.values(parent.entities)
             .filter(e => e.target == null)
-            .filter(e => distance(character,e) <= parent.G.skills.zapperzap.range)
+            .filter(e => distance(character,e) <= 300)
             .filter(e => e.mtype == 'prat')[0]
+           
+			
+			 var targeted = Object.values(parent.entities)
+            .filter(e => e.target == 'Schlange')
+            
+			 
             if (!nearest) {
-            } else if (is_in_range(nearest,'zapperzap') && character.mp >= character.max_mp*0.8) {
+            } else if (is_in_range(nearest,'zapperzap') && character.mp >= character.max_mp*0.8 && targeted.length < 2) {
                 await use_skill('zapperzap',nearest)
                 /** NOTE: We're now reducing the cooldown based on the ping */
                 reduce_cooldown("zapperzap", Math.min(...parent.pings))
