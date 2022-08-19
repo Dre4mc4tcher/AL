@@ -150,29 +150,8 @@ function consumingPotions (){
     }
 }
 //load_code(82)
-const TenMinutesInMs = 10 * 60 * 1000
-let started
-let numKilled = 0
-let numCalls = 0
-character.on("target_hit", (data) => { if (data.kill) numKilled += 1 })
-
 async function attackLoop() {
     try {
-        numCalls += 1
-        if (started == undefined) started = Date.now()
-        if (Date.now() > started + TenMinutesInMs) {
-            console.log({
-                script: "reduce_cooldown",
-                numKilled: numKilled,
-                numCalls: numCalls,
-                pings: parent.pings,
-                level: character.level,
-                server: server
-            })
-            started = Date.now()
-            numKilled = 0
-            numCalls = 0
-        }
         var nearest; 
 		if(get_nearest_monster({target:'Skorpion'||'Schlange'||'Spinne'}) == null){nearest = get_nearest_monster()} 		
 		else nearest = get_nearest_monster({target:'Skorpion'||'Schlange'||'Spinne'});
@@ -208,27 +187,12 @@ async function rspeed() {
 rspeed()
 async function mentalBurstLoop() {
     try {
-        numCalls += 1
-        if (started == undefined) started = Date.now()
-        if (Date.now() > started + TenMinutesInMs) {
-            console.log({
-                script: "reduce_cooldown",
-                numKilled: numKilled,
-                numCalls: numCalls,
-                pings: parent.pings,
-                level: character.level,
-                server: server
-            })
-            started = Date.now()
-            numKilled = 0
-            numCalls = 0
-        }
         var nearest; 
 		if(get_nearest_monster({target:'Skorpion'||'Schlange'||'Spinne'}) == null){nearest = get_nearest_monster()} 		
 		else nearest = get_nearest_monster({target:'Skorpion'||'Schlange'||'Spinne'});
         if (!nearest) {
             set_message("No Monsters")
-        } else if (is_in_range(nearest,'mentalburst')) {
+        } else if (is_in_range(nearest,'mentalburst') && character.name == ('Spinne'||'Skorpion')) {
             set_message("Attacking")
             await use_skill('mentalburst',nearest)
             /** NOTE: We're now reducing the cooldown based on the ping */
