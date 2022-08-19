@@ -217,7 +217,7 @@ async function cloaking() {
     setTimeout(cloaking, Math.max(1, ms_to_next_skill("invis")))
 }
 //cloaking()
-var group = ['Schlange','Spinne','Skorpion']
+var group = ['Warrior001','Priest001','Mage001','Schlange','Spinne','Skorpion']
 setInterval(function () 
 {
     if (character.name == group[0]) 
