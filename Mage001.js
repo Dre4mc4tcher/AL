@@ -1,5 +1,5 @@
 targetToHunt =['plantoid'];
-var group = ['Warrior001','Priest001','Mage001']
+var group = ['Warrior001','Priest001','Mage001','Schlange','Spinne','Skorpion']
 setInterval(function () 
 {
     if (character.name == group[0]) 
