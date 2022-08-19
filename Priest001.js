@@ -7,7 +7,7 @@ function ms_to_next_skill(skill) {
     const ms = parent.next_skill[skill].getTime() - Date.now()
     return ms < 0 ? 0 : ms
 }
-var group = ['Warrior001','Priest001','Mage001']
+var group = ['Warrior001','Priest001','Mage001','Schlange','Spinne','Skorpion']
 setInterval(function () 
 {
     if (character.name == group[0]) 
