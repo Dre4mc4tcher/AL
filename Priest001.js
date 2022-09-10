@@ -7,7 +7,7 @@ function ms_to_next_skill(skill) {
     const ms = parent.next_skill[skill].getTime() - Date.now()
     return ms < 0 ? 0 : ms
 }
-var group = ['Warrior001','Priest001','Mage001','Schlange','Spinne','Skorpion']
+var group = ['Schlange','Spinne','Skorpion','Warrior001','Priest001','Mage001']
 setInterval(function () 
 {
     if (character.name == group[0]) 
@@ -45,13 +45,14 @@ function on_party_invite(name)
         accept_party_invite(name);
     }
 }
-
+/*
 setInterval(function(){
     if(character.slots.elixir == null){
         buy(elixirToUse);
-        use(locate_item(elixirToUse));
+        //use(locate_item(elixirToUse));
     }
 },1000)
+*/
 setInterval(function(){
 const ownerId =["6204944617570304"]; 
  let x = Object.values(parent.entities).filter(c => ownerId.includes(c.owner));
@@ -125,9 +126,9 @@ const new_targets_from_cleave = Object.values(parent.entities).filter(e => e.typ
             tryPartyHeal();
             tryCurse(targets);
             tryDarkblessing();
-			tryAbsorb();
+			//tryAbsorb();
             //movement(targets);
-			tryAttack(targets);
+			//tryAttack(targets);
         break;
         case "ranger":
             var partyMembers1 = partyMembers();
@@ -353,7 +354,7 @@ function tryHeal(needsHealingPM,targets){
     let lowestHealthPartyMember = needsHealingPM[0];
     let target = targets[0];
     if(lowestHealthPartyMember){
-        if(lowestHealthPartyMember.healthRatio<0.95){
+        if(lowestHealthPartyMember.healthRatio<0.999){
             if(new Date() > parent.next_skill['attack']){
                 lHPM = get_player(lowestHealthPartyMember.name);
                 if(distance(character,lHPM)<character.range){
@@ -584,7 +585,10 @@ function needsHealing(partyMembers){
 
 function partyMembers(){
 
-	people=parent.party_list;
+	people=parent.party_list+'Warrior001';
+	
+	
+
 
 return people;
 }
