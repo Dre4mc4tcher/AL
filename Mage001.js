@@ -1,5 +1,10 @@
-targetToHunt =['plantoid'];
-var group = ['Warrior001','Priest001','Mage001','Schlange','Spinne','Skorpion']
+targetToHunt =[];
+var group = ['Schlange','Spinne','Skorpion','Warrior001','Priest001','Mage001']
+parent.socket.on('hit',function(data){
+if(data.dreturn){
+	console.log(data)
+}
+})
 setInterval(function () 
 {
     if (character.name == group[0]) 
@@ -592,6 +597,10 @@ function needsHealing(partyMembers){
 function partyMembers(){
 
 	people=parent.party_list;
+	
+	
+
+
 return people;
 }
 
