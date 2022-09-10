@@ -1,5 +1,6 @@
 targetToHunt =['boar']
-var group = ['Warrior001','Priest001','Mage001','Schlange','Spinne','Skorpion']
+var group = ['Schlange','Spinne','Skorpion','Warrior001','Priest001','Mage001']
+
 setInterval(function () 
 {
     if (character.name == group[0]) 
@@ -28,6 +29,89 @@ setInterval(function ()
     }
 }, 1000 * 10);
 
+//////////////////
+setInterval(()=>
+{
+	
+    let chars = ['Mage001','Rogue002','Spinne','Schlange','Rehkitz','Priest001'];
+    let ents=Object.values(parent.entities).filter(e => chars.includes(e.target) && e.type == 'monster' && e.mtype == "plantoid");
+	
+	//game_log(ents.length)
+	let mechagnomes=Object.values(parent.entities)
+		.filter(e => e.type == 'monster')
+	    .filter(e => e.mtype == "plantoid")
+		.filter(e => e.target == null)
+		.filter(e => distance(character,e)<200)
+		.sort((a,b)=>{return distance(character,a) - distance(character,b)});
+		
+	if(ents.length <6 && get_player('Priest001')){
+		
+		if(mechagnomes[0]){
+			if((character.hp/character.max_hp)>0.8 && !smart.moving && (character.mp/character.max_mp)>0.8){
+				if(!is_on_cooldown('taunt')){
+		 		//use_skill('taunt',mechagnomes[0])
+				}
+				}
+		}
+	}
+ 
+},200)
+
+//////////////////
+function ms_to_next_skill(skill) {
+    const next_skill = parent.next_skill[skill]
+    if (next_skill == undefined) return 0
+    const ms = parent.next_skill[skill].getTime() - Date.now()
+    return ms < 0 ? 0 : ms
+}
+async function stompLoop() {
+    try {
+        if(character.hp<=character.max_hp*0.8){
+            if(character.slots.mainhand.name != "basher"){
+                await unequip('mainhand')
+                await unequip('offhand')
+                await equip(locate_item('basher'),'mainhand')
+            }
+			if(character.mp>=parent.G.skills.stomp.mp){
+            await use_skill('stomp')
+			}
+				reduce_cooldown("stomp", Math.min(...parent.pings))
+        }
+        if(character.slots.mainhand.name != "vhammer"){
+            await equip(locate_item('vhammer'),'mainhand')
+            await equip(locate_item('fireblade'),'offhand')
+	
+        }
+		
+        
+    } catch (e) {
+        console.error(e)
+    }
+    setTimeout(stompLoop, Math.max(1, ms_to_next_skill("stomp")))
+}
+stompLoop()
+async function scareLoop() {
+    try {
+        if(character.hp<=character.max_hp*0.6){
+            if(character.slots.orb.name != "jacko"){
+                await equip(locate_item('jacko'))
+            }
+			if(character.mp>=parent.G.skills.scare.mp){
+            await use_skill('scare')
+			}
+				reduce_cooldown("scare", Math.min(...parent.pings))
+        }
+        if(character.slots.orb.name != "orbofstr"){
+            await equip(locate_item('orbofstr'))
+            
+        }
+        
+    } catch (e) {
+        console.error(e)
+    }
+    setTimeout(scareLoop, Math.max(1, ms_to_next_skill("scare")))
+}
+scareLoop()
 function on_party_invite(name) 
 {
     console.log("Party Invite");
@@ -39,20 +123,27 @@ function on_party_invite(name)
 }
 async function agitateLOOP() {
     try {    
-        var plantoidS = Object.values(parent.entities).filter(e => e.target == "Warrior001");
+        const plantoidS = Object.values(parent.entities).filter(e => e.target == "Warrior001");
+		const priestPresent = get_player('Priest001');
+		const dreturn = Object.values(parent.entities)
+		.filter(e => e.mtype == 'porcupine')
+		.filter(e => distance(character,e)<=320)
 		
-        if(plantoidS.length <6 && get_player('Priest001')){
+        if(plantoidS.length <6){
+			if(priestPresent && dreturn.length == 0){
             set_message("Agitating")
+				if(character.mp>=parent.G.skills.agitate.mp){
             await use_skill('agitate')
-        }
-            
-        
+				}
+				}
+		}   
     } catch (e) {
         console.error(e)
     }
-    setTimeout(agitateLOOP, 1000)
+    setTimeout(agitateLOOP, Math.max(1, ms_to_next_skill("agitate")))
 }
 agitateLOOP()
+
 async function movementsloop(){
     try{
         await move(-700,-450)
@@ -62,7 +153,7 @@ async function movementsloop(){
     }
     setTimeout(movementsloop,500)
 }
-movementsloop()
+//movementsloop()
 
 function distanceToPoint(x1, y1, x2, y2)
 {
@@ -79,7 +170,7 @@ setInterval(function(){
             var targets = targeting(partyMembers1);
             tryAttack(targets);
            	//tryCleave();
-            //tryHardshell();
+            tryHardshell();
             //tryStomp(needsHealingPM);
             tryTaunt();
             //tryCharge();
@@ -116,7 +207,7 @@ function tryAttack(targets){
  	
     let target = targets[0];
     if(new Date > parent.next_skill['attack'] || parent.next_skill['attack'] == null){
-      if(target != null){
+      if(target != null && get_player('Priest001')){
             if(distance(character,target)<character.range){
 				if(character.mp >= character.mp_cost){
                 parent.socket.emit('attack', {id: target.id});
@@ -164,7 +255,7 @@ function tryStomp(needsHealingPM){
 var lastHardshell;
 function tryHardshell(){
     var cooldown = parent.G.skills['hardshell'].cooldown;
-    if((character.hp/character.max_hp) < 0.7){
+    if((character.hp/character.max_hp) < 0.6){
         if(lastHardshell == null || new Date() - lastHardshell > cooldown){
             if(character.mp>=parent.G.skills['hardshell'].mp){
                 parent.socket.emit('skill',{name:'hardshell'});
@@ -368,7 +459,7 @@ function consumingPotions (){
 				}
 			}
             else{ // if the character is not a priest hp is more important as mp
-                if((character.hp/character.max_hp)<0.75)
+                if((character.hp/character.max_hp)<0.01)
                 {
                     if((character.max_hp-character.hp) > 400){  // use big hp pots when needed
                         parent.socket.emit("equip", { num: locate_item("hpot1")});
@@ -454,8 +545,6 @@ function needsHealing(partyMembers){
 function partyMembers(){
 
 	people=parent.party_list;
-	
-}
 
 return people;
 }
@@ -524,4 +613,70 @@ function oOo(spot,radius,whoIsCenter){
     var centerY = whoIsCenter.real_y+Math.sin(angle)*radius;
     move(centerX,centerY);  
 }
+
+async function moveYOA(){
+const vv = [{
+		"x": -750,
+		"y": -440
+	},
+	{
+		"x": -754,
+		"y": -455
+	},
+	{
+		"x": -764,
+		"y": -466
+	},
+	{
+		"x": -779,
+		"y": -470
+	},
+	{
+		"x": -794,
+		"y": -467
+	},
+	{
+		"x": -805,
+		"y": -456
+	},
+	{
+		"x": -809,
+		"y": -432
+	},
+	
+	{
+		"x": -802,
+		"y": -419
+	},
+	
+	{
+		"x": -789,
+		"y": -411
+	},
+	
+	{
+		"x": -773,
+		"y": -411
+	},
+	
+	{
+		"x": -760,
+		"y": -418
+	},
+	]
+	await move(vv[0].x,vv[0].y)
+	await move(vv[1].x,vv[1].y)
+	await move(vv[2].x,vv[2].y)
+	await move(vv[3].x,vv[3].y)
+	await move(vv[4].x,vv[4].y)
+	await move(vv[5].x,vv[5].y)
+	await move(vv[6].x,vv[6].y)
+	await move(vv[7].x,vv[7].y)
+	await move(vv[8].x,vv[8].y)
+	await move(vv[9].x,vv[9].y)
+	await move(vv[10].x,vv[10].y)
+	await moveYOA();
+
+}
+moveYOA();
 
