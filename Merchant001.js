@@ -1,4 +1,5 @@
 setInterval(()=>{
+	dispense_mluck()
 	if(character.map != "cyberland"){
 		if(!smart.moving){smart_move('cyberland')}}
 	consumingPotions ();
@@ -16,6 +17,23 @@ setInterval(()=>{
 	parent.socket.emit("eval", {command:"attack"})}
 },100)
 
+async function dispense_mluck() {
+    const chars = Object.values(parent.entities)
+        .concat([character])
+        .filter((e) => is_character(e) && is_in_range(e, "mluck"));
+
+    for (const c of chars) {
+        if (
+            !c.s ||
+            !c.s.mluck ||
+            (c.s.mluck.f !== character.name && !c.s.mluck.strong) ||
+            c.s.mluck.ms < minutes(30)
+        ) {
+            await use_skill("mluck", c.name);
+            await sleep(5 + parent.next_skill["mluck"]);
+        }
+    }
+}
 
 function on_magiport(name) {
   if(name == "Mage001"){
