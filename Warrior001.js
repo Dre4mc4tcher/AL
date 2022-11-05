@@ -635,7 +635,7 @@ function angle_to_point(c, p) {
 
 setInterval(()=>{
 	const center = {x: 471, y: 217};
-	const radius = 50;
+	const radius = 25;
 	const angle_speed = -character.speed/radius * 0.2;
 	
 	const current_angle = angle_to_point(center, character);
