@@ -598,6 +598,7 @@ if(target){
       }
   }
 }
+
 function partyCirclePosition(radius){
   const positions =[];
   if(parent.party){
@@ -607,76 +608,40 @@ function partyCirclePosition(radius){
      return positions.find(e => e.name === character.name);
   }
 }
+
 function oOo(spot,radius,whoIsCenter){
     var angle = 72*spot;
     var centerX = whoIsCenter.real_x+Math.cos(angle)*radius;
     var centerY = whoIsCenter.real_y+Math.sin(angle)*radius;
     move(centerX,centerY);  
 }
-
-async function moveYOA(){
-const vv = [{
-		"x": -750,
-		"y": -440
-	},
-	{
-		"x": -754,
-		"y": -455
-	},
-	{
-		"x": -764,
-		"y": -466
-	},
-	{
-		"x": -779,
-		"y": -470
-	},
-	{
-		"x": -794,
-		"y": -467
-	},
-	{
-		"x": -805,
-		"y": -456
-	},
-	{
-		"x": -809,
-		"y": -432
-	},
-	
-	{
-		"x": -802,
-		"y": -419
-	},
-	
-	{
-		"x": -789,
-		"y": -411
-	},
-	
-	{
-		"x": -773,
-		"y": -411
-	},
-	
-	{
-		"x": -760,
-		"y": -418
-	},
-	]
-	await move(vv[0].x,vv[0].y)
-	await move(vv[1].x,vv[1].y)
-	await move(vv[2].x,vv[2].y)
-	await move(vv[3].x,vv[3].y)
-	await move(vv[4].x,vv[4].y)
-	await move(vv[5].x,vv[5].y)
-	await move(vv[6].x,vv[6].y)
-	await move(vv[7].x,vv[7].y)
-	await move(vv[8].x,vv[8].y)
-	await move(vv[9].x,vv[9].y)
-	await move(vv[10].x,vv[10].y)
-	await moveYOA();
-
+///egehank circle runner
+/* Sum two of 2D vectors */
+function vector_sum(a, b) {
+    return {x: a.x + b.x, y: a.y + b.y};
 }
-moveYOA();
+
+/* Convert polar vector coordiantes to cartesian */
+function polar2cartesian(v) {
+    return {x: v.r*Math.cos(v.a), y: v.r*Math.sin(v.a)};
+}
+
+/* Finds the angle of point p relative to center c */
+function angle_to_point(c, p) {
+    const dx = p.x - c.x;
+    const dy = p.y - c.y;
+    return Math.atan2(dy, dx);
+}
+
+setInterval(()=>{
+	const center = {x: 0, y: 0};
+	const radius = 50;
+	const angle_speed = -character.speed/radius * 0.2;
+	
+	const current_angle = angle_to_point(center, character);
+	const next_angle = current_angle + angle_speed;
+
+	const next_position = vector_sum(center, polar2cartesian({r: radius, a: next_angle}));
+	move(next_position.x, next_position.y);
+}, 200);
 
