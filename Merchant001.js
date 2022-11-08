@@ -1,8 +1,13 @@
 setInterval(()=>{
 	dispense_mluck()
-	if(character.map != "cyberland"){
-		if(!smart.moving){smart_move('cyberland')}}
-	consumingPotions ();
+	consumingPotions ()
+	if(character.map != "cyberland" && character.esize > 2){
+		if(!smart.moving){smart_move('cyberland')}
+	}
+	else {
+		if(!smart.moving){smart_move({map:'main',x:0,y:0})}
+	}
+	}
 	if(Object.values(parent.entities)
 	   .filter(n=> n.type == "monster")
 	   .filter(n => n.target == "Merchant001")
@@ -170,13 +175,15 @@ setInterval(function() {
 }, 1000 / 4); //Loop every 1/4 seconds.
 
 function sellItem() {
-  for (let i = 0; i < character.items.length; i++) {
-    let c = character.items[i];
-    if (c) {
-      if (c && whitelist.includes(c.name)) {
+	if(character.map == "main"){
+  		for (let i = 0; i < character.items.length; i++) {
+    			let c = character.items[i];
+    			if (c) {
+      				if (c && whitelist.includes(c.name)) {
 
-        sell(i);
-      }
-    }
-  }
+        				sell(i);
+      				}
+    			}
+  		}
+	}
 }
